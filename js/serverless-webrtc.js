@@ -26,6 +26,23 @@ var sdpConstraints = {
     OfferToReceiveVideo: true
   }
 }
+var constraints = {
+    audio: false,
+    video: {
+        width: {
+            ideal: 1920,
+            max:  1920,
+        },
+        height: {
+            ideal: 1080,
+            max: 1080,
+        },
+        frameRate: {
+            ideal: 15,
+            max:  15
+        }
+    }
+};
 
 $('#showLocalOffer').modal('hide')
 $('#getRemoteAnswer').modal('hide')
@@ -38,12 +55,8 @@ $('#createBtn').click(function () {
 })
 
 $('#joinBtn').click(function () {
-  // navigator.getUserMedia = navigator.getUserMedia ||
-  //                          navigator.webkitGetUserMedia ||
-  //                          navigator.mozGetUserMedia ||
-  //                          navigator.msGetUserMedia
-  // navigator.getUserMedia({video: true, audio: true}, function (stream) {
   function getSuccess(stream){
+    console.log("get stream success constraints: " + JSON.stringify(constraints, null, '  '))
     var video = document.getElementById('localVideo')
     video.srcObject = stream
     video.play()
@@ -55,21 +68,12 @@ $('#joinBtn').click(function () {
   }
   if(navigator.getDisplayMedia){
     console.warn("1111")
-    navigator.getDisplayMedia({video: true, audio: false}).then(getSuccess).catch(getFailed)
+    navigator.getDisplayMedia(constraints).then(getSuccess).catch(getFailed)
   }else if(navigator.mediaDevices.getDisplayMedia){
     console.warn("22222")
-    navigator.mediaDevices.getDisplayMedia({video: true, audio: false}).then(getSuccess).catch(getFailed)
+    navigator.mediaDevices.getDisplayMedia(constraints).then(getSuccess).catch(getFailed)
   }
 
-  // navigator.getDisplayMedia({video: true, audio: false}, function (stream) {
-  //   var video = document.getElementById('localVideo')
-  //   // video.src = window.URL.createObjectURL(stream)
-  //   video.srcObject = stream
-  //   video.play()
-  //   pc2.addStream(stream)
-  // }, function (error) {
-  //   console.log('Error adding stream to pc2: ' + error)
-  // })
   $('#getRemoteOffer').modal('show')
 })
 
@@ -80,7 +84,9 @@ $('#offerSentBtn').click(function () {
 $('#offerRecdBtn').click(function () {
   var offer = $('#remoteOffer').val()
   var offerDesc = new RTCSessionDescription(JSON.parse(offer))
-  console.log('Received remote offer', offerDesc)
+  console.log('Received remote offer', offerDesc.sdp.toString())
+  offerDesc = dealWithSdp(offerDesc)
+  console.log(" get remote offer:",offerDesc.sdp.toString())
   writeToChatLog('Received remote offer', 'text-success')
   handleOfferFromPC1(offerDesc)
   $('#showLocalAnswer').modal('show')
@@ -174,12 +180,8 @@ function setupDC1 () {
 
 function createLocalOffer () {
     console.log('video1')
-    // navigator.getUserMedia = navigator.getUserMedia ||
-    //                          navigator.webkitGetUserMedia ||
-    //                          navigator.mozGetUserMedia ||
-    //                          navigator.msGetUserMedia
-    // navigator.getUserMedia({video: true, audio: true}, function (stream) {
     function getSuccess(stream) {
+        console.log("get stream success constraints: " + JSON.stringify(constraints, null, '  '))
         var video = document.getElementById('localVideo')
         video.srcObject = stream
         video.play()
@@ -191,7 +193,9 @@ function createLocalOffer () {
             pc1.setLocalDescription(desc, function () {
             }, function () {
             })
-            console.log('created local offer', desc)
+            console.log('created local offer', desc.sdp.toString())
+            desc = dealWithSdp(desc)
+            console.log('local offer:',desc.sdp.toString())
         }, function () {
             console.warn("Couldn't create offer")
         }, sdpConstraints)
@@ -200,33 +204,30 @@ function createLocalOffer () {
     function getFailed(error){
         console.log('Error adding stream to pc1: ' + error)
     }
+    let constraints = {
+        audio: false,
+        video: {
+            width: {
+                ideal: 1920,
+                max:  1920,
+            },
+            height: {
+                ideal: 1080,
+                max: 1080,
+            },
+            frameRate: {
+                ideal: 15,
+                max:  15
+            }
+        }
+    };
     if(navigator.getDisplayMedia){
-        navigator.getDisplayMedia({video: true, audio: false}).then(getSuccess).catch(getFailed)
+        navigator.getDisplayMedia(constraints).then(getSuccess).catch(getFailed)
     }else if(navigator.mediaDevices.getDisplayMedia){
-        navigator.mediaDevices.getDisplayMedia({video: true, audio: false}).then(getSuccess).catch(getFailed)
+        navigator.mediaDevices.getDisplayMedia(constraints).then(getSuccess).catch(getFailed)
     }
 
 }
-
-//     navigator.getDisplayMedia({video: true, audio: false}, function (stream) {
-//     var video = document.getElementById('localVideo')
-//     // video.src = window.URL.createObjectURL(stream)
-//       video.srcObject = stream
-//     video.play()
-//     pc1.addStream(stream)
-//     console.log(stream)
-//     console.log('adding stream to pc1')
-//     setupDC1()
-//     pc1.createOffer(function (desc) {
-//       pc1.setLocalDescription(desc, function () {}, function () {})
-//       console.log('created local offer', desc)
-//     },
-//     function () { console.warn("Couldn't create offer") },
-//     sdpConstraints)
-//   }, function (error) {
-//     console.log('Error adding stream to pc1: ' + error)
-//   })
-// }
 
 pc1.onicecandidate = function (e) {
   console.log('ICE candidate (pc1)', e)
@@ -288,8 +289,27 @@ pc1.onicegatheringstatechange = onicegatheringstatechange
 
 function handleAnswerFromPC2 (answerDesc) {
   console.log('Received remote answer: ', answerDesc)
+  answerDesc = dealWithSdp(answerDesc)
+  console.log('remote answer:',answerDesc.sdp.toString())
   writeToChatLog('Received remote answer', 'text-success')
   pc1.setRemoteDescription(answerDesc)
+}
+
+function dealWithSdp(desc){
+    console.log("处理SDP")
+    let parsedSdp = SDPTools.parseSDP(desc.sdp)
+    for(let i = 0; i < parsedSdp.media.length; i++){
+        let media = parsedSdp.media[i]
+        let codec = ['VP9','VP8']
+        console.warn("删除VP8、VP9编码")
+        SDPTools.removeCodecByName(parsedSdp, i, codec)
+        // SDPTools.setXgoogleBitrate(parsedSdp, ASBitrate, i)
+        SDPTools.removeRembAndTransportCC(parsedSdp, i)
+        media.payloads = media.payloads.trim()
+
+    }
+    desc.sdp = SDPTools.writeSDP(parsedSdp)
+    return  desc
 }
 
 function handleCandidateFromPC2 (iceCandidate) {
@@ -335,7 +355,9 @@ function handleOfferFromPC1 (offerDesc) {
   pc2.setRemoteDescription(offerDesc)
   pc2.createAnswer(function (answerDesc) {
     writeToChatLog('Created local answer', 'text-success')
-    console.log('Created local answer: ', answerDesc)
+    console.log('Created local answer: ', answerDesc.sdp.toString())
+    answerDesc = dealWithSdp(answerDesc)
+    console.log("local answer:",answerDesc.sdp.toString())
     pc2.setLocalDescription(answerDesc)
   },
   function () { console.warn("Couldn't create offer") },
