@@ -1207,7 +1207,8 @@ let SDPTools = {
 
         let bandwidth = {
             AS: AS,
-            TIAS: (AS - 192) / 1000
+            // TIAS: (AS - 192) / 1000
+            TIAS:409600
         }
         let media = session.media[index]
         if(media){

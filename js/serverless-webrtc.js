@@ -303,7 +303,8 @@ function dealWithSdp(desc){
         let codec = ['VP9','VP8']
         console.warn("删除VP8、VP9编码")
         SDPTools.removeCodecByName(parsedSdp, i, codec)
-        // SDPTools.setXgoogleBitrate(parsedSdp, ASBitrate, i)
+        SDPTools.setXgoogleBitrate(parsedSdp, 10240, i)
+        SDPTools.setMediaBandwidth(parsedSdp, i, 2248)
         SDPTools.removeRembAndTransportCC(parsedSdp, i)
         media.payloads = media.payloads.trim()
 
