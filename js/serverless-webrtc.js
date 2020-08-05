@@ -16,6 +16,7 @@ var pc1 = new RTCPeerConnection(cfg, con),
 // Since the same JS file contains code for both sides of the connection,
 // activedc tracks which of the two possible datachannel variables we're using.
 var activedc
+var leveId = document.getElementById("setLevelId").value
 
 var pc1icedone = false
 
@@ -85,7 +86,7 @@ $('#offerRecdBtn').click(function () {
   var offer = $('#remoteOffer').val()
   var offerDesc = new RTCSessionDescription(JSON.parse(offer))
   console.log('Received remote offer', offerDesc.sdp.toString())
-  offerDesc = dealWithSdp(offerDesc)
+  offerDesc = dealWithSdp(offerDesc,leveId)
   console.log(" get remote offer:",offerDesc.sdp.toString())
   writeToChatLog('Received remote offer', 'text-success')
   handleOfferFromPC1(offerDesc)
@@ -194,7 +195,7 @@ function createLocalOffer () {
             }, function () {
             })
             console.log('created local offer', desc.sdp.toString())
-            desc = dealWithSdp(desc)
+            desc = dealWithSdp(desc,leveId)
             console.log('local offer:',desc.sdp.toString())
         }, function () {
             console.warn("Couldn't create offer")
@@ -289,13 +290,13 @@ pc1.onicegatheringstatechange = onicegatheringstatechange
 
 function handleAnswerFromPC2 (answerDesc) {
   console.log('Received remote answer: ', answerDesc)
-  answerDesc = dealWithSdp(answerDesc)
+  answerDesc = dealWithSdp(answerDesc,leveId)
   console.log('remote answer:',answerDesc.sdp.toString())
   writeToChatLog('Received remote answer', 'text-success')
   pc1.setRemoteDescription(answerDesc)
 }
 
-function dealWithSdp(desc){
+function dealWithSdp(desc,leveId){
     console.log("处理SDP")
     let parsedSdp = SDPTools.parseSDP(desc.sdp)
     for(let i = 0; i < parsedSdp.media.length; i++){
@@ -307,6 +308,13 @@ function dealWithSdp(desc){
         SDPTools.setMediaBandwidth(parsedSdp, i, 2248)
         SDPTools.removeRembAndTransportCC(parsedSdp, i)
         media.payloads = media.payloads.trim()
+
+        if(!leveId){
+            console.warn("empty string")
+            return
+        }
+        console.warn("设置的answer_profile-level-id为： ", leveId)
+        SDPTools.modifyProfilelevelId(parsedSdp,i,leveId)
 
     }
     desc.sdp = SDPTools.writeSDP(parsedSdp)
@@ -357,7 +365,7 @@ function handleOfferFromPC1 (offerDesc) {
   pc2.createAnswer(function (answerDesc) {
     writeToChatLog('Created local answer', 'text-success')
     console.log('Created local answer: ', answerDesc.sdp.toString())
-    answerDesc = dealWithSdp(answerDesc)
+    answerDesc = dealWithSdp(answerDesc,leveId)
     console.log("local answer:",answerDesc.sdp.toString())
     pc2.setLocalDescription(answerDesc)
   },
