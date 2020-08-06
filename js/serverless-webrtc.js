@@ -205,23 +205,7 @@ function createLocalOffer () {
     function getFailed(error){
         console.log('Error adding stream to pc1: ' + error)
     }
-    // let constraints = {
-    //     audio: false,
-    //     video: {
-    //         width: {
-    //             ideal: 1920,
-    //             max:  1920,
-    //         },
-    //         height: {
-    //             ideal: 1080,
-    //             max: 1080,
-    //         },
-    //         frameRate: {
-    //             ideal: 15,
-    //             max:  15
-    //         }
-    //     }
-    // };
+
     if(navigator.getDisplayMedia){
         navigator.getDisplayMedia(constraints).then(getSuccess).catch(getFailed)
     }else if(navigator.mediaDevices.getDisplayMedia){
@@ -313,10 +297,9 @@ function dealWithSdp(desc,leveId){
             SDPTools.setXgoogleBitrate(parsedSdp, 10240, i)
             SDPTools.setMediaBandwidth(parsedSdp, i, 2248)
             SDPTools.removeRembAndTransportCC(parsedSdp, i)
-            console.warn("hehehhehehehhehehe")
+
             // myTrim(media.payloads)
             media.payloads = media.payloads.trim()
-            console.warn("juanjuanjuanjuanjuan")
             console.warn("media_payloads:",media.payloads)
 
             // SDPTools.modifyPacketizationMode(parsedSdp, i)

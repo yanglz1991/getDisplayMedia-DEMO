@@ -1381,7 +1381,6 @@ let SDPTools = {
      */
 
     deleteFmtp:function(session,index){
-        console.warn("come in deleteFmtp")
         if(!session ){
             console.warn('setFrameRate: Invalid argument!')
             return
@@ -1392,7 +1391,6 @@ let SDPTools = {
                 let fmtp = media.fmtp
                 delete media.fmtp[1]
                 console.warn("fmtp:",fmtp)
-                console.warn("config:",fmtpItem.config)
             }
         }
 
