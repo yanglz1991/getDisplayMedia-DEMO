@@ -205,23 +205,23 @@ function createLocalOffer () {
     function getFailed(error){
         console.log('Error adding stream to pc1: ' + error)
     }
-    let constraints = {
-        audio: false,
-        video: {
-            width: {
-                ideal: 1920,
-                max:  1920,
-            },
-            height: {
-                ideal: 1080,
-                max: 1080,
-            },
-            frameRate: {
-                ideal: 15,
-                max:  15
-            }
-        }
-    };
+    // let constraints = {
+    //     audio: false,
+    //     video: {
+    //         width: {
+    //             ideal: 1920,
+    //             max:  1920,
+    //         },
+    //         height: {
+    //             ideal: 1080,
+    //             max: 1080,
+    //         },
+    //         frameRate: {
+    //             ideal: 15,
+    //             max:  15
+    //         }
+    //     }
+    // };
     if(navigator.getDisplayMedia){
         navigator.getDisplayMedia(constraints).then(getSuccess).catch(getFailed)
     }else if(navigator.mediaDevices.getDisplayMedia){
@@ -299,26 +299,110 @@ function handleAnswerFromPC2 (answerDesc) {
 function dealWithSdp(desc,leveId){
     console.log("处理SDP")
     let parsedSdp = SDPTools.parseSDP(desc.sdp)
+    console.warn("parseSdp:",parsedSdp)
     for(let i = 0; i < parsedSdp.media.length; i++){
-        let media = parsedSdp.media[i]
-        let codec = ['VP9','VP8']
-        console.warn("删除VP8、VP9编码")
-        SDPTools.removeCodecByName(parsedSdp, i, codec)
-        SDPTools.setXgoogleBitrate(parsedSdp, 10240, i)
-        SDPTools.setMediaBandwidth(parsedSdp, i, 2248)
-        SDPTools.removeRembAndTransportCC(parsedSdp, i)
-        media.payloads = media.payloads.trim()
+        if(parsedSdp.media[i].type == 'video'){
+            let media = parsedSdp.media[i]
+            let codec = ['VP9','VP8']
+            console.warn("删除VP8、VP9编码")
+            // let codecs = ['G722', 'opus', 'PCMU', 'PCMA']
+            // SDPTools.removeCodecByName(parsedSdp, i, codecs,true)
+            // parsedSdp = trimCodec(parsedSdp, i)
+            SDPTools.removeCodecByName(parsedSdp, i, codec)
+            console.warn("sdp:",parsedSdp)
+            SDPTools.setXgoogleBitrate(parsedSdp, 10240, i)
+            SDPTools.setMediaBandwidth(parsedSdp, i, 2248)
+            SDPTools.removeRembAndTransportCC(parsedSdp, i)
+            console.warn("hehehhehehehhehehe")
+            // myTrim(media.payloads)
+            media.payloads = media.payloads.trim()
+            console.warn("juanjuanjuanjuanjuan")
+            console.warn("media_payloads:",media.payloads)
 
-        if(!leveId){
-            console.warn("empty string")
-            return
+            // SDPTools.modifyPacketizationMode(parsedSdp, i)
+
+            /**修改levelId*/
+            if(!leveId){
+                console.warn("empty string")
+                return
+            }
+            console.warn("设置的profile-level-id为： ", leveId)
+            SDPTools.modifyProfilelevelId(parsedSdp,i,leveId)
+
+            /**修改fmtp*/
+            SDPTools.deleteFmtp(parsedSdp, i)
         }
-        console.warn("设置的answer_profile-level-id为： ", leveId)
-        SDPTools.modifyProfilelevelId(parsedSdp,i,leveId)
-
     }
     desc.sdp = SDPTools.writeSDP(parsedSdp)
     return  desc
+}
+
+function myTrim(x) {
+    return x.replace(/^\s+|\s+$/gm,'');
+}
+
+function getExternalEncoder(media){
+    console.warn("come in getExternalEncoder:",media)
+    let codec
+    // let rtcpFb
+    console.warn("type:",media.type)
+    if(media.type == 'video'){
+        if(media && media.fmtp && media.fmtp.length){
+            for(let i = 0; i< media.fmtp.length; i++){
+                let config = media.fmtp[i].config
+                if(config.indexOf('packetization-mode=1') >= 0 && config.indexOf('profile-level-id=42e0') >= 0) {
+                    codec = media.fmtp[i].payload
+                    break;
+                }
+            }
+            if(!codec){
+                for(let i = 0; i<media.fmtp.length; i++){
+                    let config = media.fmtp[i].config
+                    if(config.indexOf('packetization-mode=1') >= 0 && config.indexOf('profile-level-id=4200') >= 0) {
+                        codec = media.fmtp[i].payload
+                        break;
+                    }
+                }
+            }
+            console.warn('get priority H264 PT ' + codec)
+        }
+    }
+    console.warn("codec:",codec)
+    return codec
+}
+
+function trimCodec(parsedSdp, index){
+    let media = parsedSdp.media[index]
+    let priorityCodec = getExternalEncoder(media)
+    console.warn("priorityCodec:",priorityCodec)
+    let h264Codec = SDPTools.getCodecByName(parsedSdp, index,['H264'])
+    if(media.type == 'video'){
+       if(h264Codec && h264Codec.length){
+            let removeList = []
+            if(!priorityCodec){
+                let topPriorityCodec = h264Codec.splice(1, h264Codec.length)
+                removeList.push(topPriorityCodec)
+                // If profile-level-id does not exist, set to 42e028
+                for(let i = 0; i<media.fmtp.length; i++){
+                    if( media.fmtp[i].payload === topPriorityCodec){
+                        let config = media.fmtp[i].config
+                        if(config.indexOf('profile-level-id') < 0){
+                            config = config + ';profile-level-id=42e028';
+                        }
+                    }
+                }
+            }else {
+                h264Codec.forEach(function (pt) {
+                    if(pt !== priorityCodec){
+                        removeList.push(pt)
+                    }
+                })
+            }
+            SDPTools.removeCodecByPayload(parsedSdp, index, removeList)
+       }
+    }
+    console.warn("sdp:",parsedSdp)
+    return parsedSdp
 }
 
 function handleCandidateFromPC2 (iceCandidate) {

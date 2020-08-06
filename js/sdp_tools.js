@@ -834,7 +834,6 @@ let SDPTools = {
             if (mediaSession.rtcpFb !== undefined) {
                 /*Process rtcpFb*/
                 for (let i = 0; i < mediaSession.rtcpFb.length;) {
-
                     if (mediaSession.rtcpFb[i].payload === pt) {
                         mediaSession.rtcpFb.splice(i, 1)
                         //break; more than one rtcpFb for some payload.
@@ -913,12 +912,11 @@ let SDPTools = {
         /*Get payloads by names*/
         mediaSession.rtp.forEach(item => {
             codecList.forEach(codec => {
-                if (item.codec === codec) {
+                if (item.codec === codec ) {
                     payloads.push(item.payload)
                 }
             })
         })
-
         return payloads
     },
 
@@ -1282,7 +1280,7 @@ let SDPTools = {
         }
     },
 
-    removeRembAndTransportCC: function(session, index){
+    removeRembAndTransportCC: function (session, index){
         if(index !== undefined){
             let media = session.media[index]
             if(media.rtcpFb && media.rtcpFb.length){
@@ -1339,9 +1337,7 @@ let SDPTools = {
      * @param index
      * @param levelIdc: a=fmtp:102 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42001f
      */
-    modifyProfilelevelId:function(session,index,levelIdc){
-        console.log("session:",session)
-        console.log("levelIdc:",levelIdc)
+    modifyProfilelevelId: function(session,index,levelIdc){
         if(!session ){
             console.warn('setFrameRate: Invalid argument!')
             return
@@ -1355,6 +1351,52 @@ let SDPTools = {
         }
     },
 
+    /**
+     * modify packetization-mode
+     * @param session
+     * @param index
+     * @param levelIdc: a=fmtp:102 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42001f
+     */
+    modifyPacketizationMode:function(session,index){
+        if(!session ){
+            console.warn('setFrameRate: Invalid argument!')
+            return
+        }
+        let media = session.media[index]
+        for(let fmtpItem of media.fmtp){
+            if(fmtpItem.payload == 97){
+                if(fmtpItem.config.indexOf('packetization-mode=0') >= 0){
+                    console.warn("找到packetization-mode=0")
+                    let replacement = 'packetization-mode=' + 1
+                    fmtpItem.config  = fmtpItem.config .replace(/packetization-mode=([a-zA-Z0-9]{1})/, replacement);
+                }
+            }
+        }
+    },
+    /**
+     * delete fmtp
+     * @param session
+     * @param index
+     * @param levelIdc: a=fmtp:102 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42001f
+     */
+
+    deleteFmtp:function(session,index){
+        console.warn("come in deleteFmtp")
+        if(!session ){
+            console.warn('setFrameRate: Invalid argument!')
+            return
+        }
+        let media = session.media[index]
+        for(let fmtpItem of media.fmtp){
+            if(fmtpItem.payload == 97){
+                let fmtp = media.fmtp
+                delete media.fmtp[1]
+                console.warn("fmtp:",fmtp)
+                console.warn("config:",fmtpItem.config)
+            }
+        }
+
+    },
     parseFmtpConfig: function (str) {
         return str.split(/;\s?/).reduce(paramReducer, {})
     },
