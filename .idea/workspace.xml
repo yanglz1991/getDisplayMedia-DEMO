@@ -2,10 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd89b1f6-80c1-4a22-b0e7-ce317deed9e2" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/css/serverless-webrtc-bootstrap.css" beforeDir="false" afterPath="$PROJECT_DIR$/css/serverless-webrtc-bootstrap.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/sdp_tools.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/sdp_tools.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/serverless-webrtc.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/serverless-webrtc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/serverless-webrtc.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/serverless-webrtc.png" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -19,29 +20,38 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="serverless-webrtc.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/js/serverless-webrtc.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1726">
-              <caret line="222" column="12" lean-forward="true" selection-start-line="222" selection-start-column="12" selection-end-line="222" selection-end-column="12" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="sdp_tools.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/js/sdp_tools.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="511">
-              <caret line="1577" selection-start-line="1577" selection-end-line="1577" />
+            <state relative-caret-position="242">
+              <caret line="1208" column="24" selection-start-line="1208" selection-start-column="24" selection-end-line="1208" selection-end-column="24" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="serverless-webrtc.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/js/serverless-webrtc.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="459">
+              <caret line="295" column="33" selection-start-line="295" selection-start-column="33" selection-end-line="295" selection-end-column="33" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="243">
+            <state relative-caret-position="162">
               <caret line="9" column="43" selection-start-line="9" selection-start-column="3" selection-end-line="9" selection-end-column="43" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="serverless-webrtc-bootstrap.css" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/css/serverless-webrtc-bootstrap.css">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="189">
+              <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
             </state>
           </provider>
         </entry>
@@ -54,7 +64,9 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
+        <option value="$PROJECT_DIR$/js/serverless-webrtc.js" />
         <option value="$PROJECT_DIR$/js/sdp_tools.js" />
+        <option value="$PROJECT_DIR$/css/serverless-webrtc-bootstrap.css" />
       </list>
     </option>
   </component>
@@ -95,6 +107,12 @@
               <item name="getDisplayMedia-DEMO" type="b2602c69:ProjectViewProjectNode" />
               <item name="getDisplayMedia-DEMO" type="462c0819:PsiDirectoryNode" />
               <item name="css" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="getDisplayMedia-DEMO" type="b2602c69:ProjectViewProjectNode" />
+              <item name="getDisplayMedia-DEMO" type="462c0819:PsiDirectoryNode" />
+              <item name="css" type="462c0819:PsiDirectoryNode" />
+              <item name="bootstrap-responsive.css" type="620a8d5e:NestingTreeNode" />
             </path>
             <path>
               <item name="getDisplayMedia-DEMO" type="b2602c69:ProjectViewProjectNode" />
@@ -154,24 +172,25 @@
       <option name="presentableId" value="Default" />
       <updated>1596540602848</updated>
       <workItem from="1596540604161" duration="4128000" />
-      <workItem from="1596695772798" duration="257000" />
+      <workItem from="1596695772798" duration="2825000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4385000" />
+    <option name="totallyTimeSpent" value="6953000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24920969" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24920969" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="7" visible="true" weight="0.3293348" />
+      <window_info anchor="bottom" id="Terminal" order="7" visible="true" weight="0.3293348" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -211,24 +230,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/serverless-webrtc.js">
+    <entry file="file://$PROJECT_DIR$/js/sdp_tools.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1726">
-          <caret line="222" column="12" lean-forward="true" selection-start-line="222" selection-start-column="12" selection-end-line="222" selection-end-column="12" />
+        <state relative-caret-position="242">
+          <caret line="1208" column="24" selection-start-line="1208" selection-start-column="24" selection-end-line="1208" selection-end-column="24" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/sdp_tools.js">
+    <entry file="file://$PROJECT_DIR$/js/serverless-webrtc.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="511">
-          <caret line="1577" selection-start-line="1577" selection-end-line="1577" />
+        <state relative-caret-position="459">
+          <caret line="295" column="33" selection-start-line="295" selection-start-column="33" selection-end-line="295" selection-end-column="33" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
+        <state relative-caret-position="162">
           <caret line="9" column="43" selection-start-line="9" selection-start-column="3" selection-end-line="9" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/css/serverless-webrtc-bootstrap.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
         </state>
       </provider>
     </entry>

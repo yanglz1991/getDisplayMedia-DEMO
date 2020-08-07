@@ -28,7 +28,7 @@ var sdpConstraints = {
   }
 }
 var constraints = {
-    audio: false,
+    audio: true,
     video: {
         width: {
             ideal: 1920,
@@ -74,7 +74,6 @@ $('#joinBtn').click(function () {
     console.warn("22222")
     navigator.mediaDevices.getDisplayMedia(constraints).then(getSuccess).catch(getFailed)
   }
-
   $('#getRemoteOffer').modal('show')
 })
 
@@ -283,7 +282,7 @@ function handleAnswerFromPC2 (answerDesc) {
 function dealWithSdp(desc,leveId){
     console.log("处理SDP")
     let parsedSdp = SDPTools.parseSDP(desc.sdp)
-    console.warn("parseSdp:",parsedSdp)
+    console.warn("sdp:",parsedSdp)
     for(let i = 0; i < parsedSdp.media.length; i++){
         if(parsedSdp.media[i].type == 'video'){
             let media = parsedSdp.media[i]
@@ -293,9 +292,8 @@ function dealWithSdp(desc,leveId){
             // SDPTools.removeCodecByName(parsedSdp, i, codecs,true)
             // parsedSdp = trimCodec(parsedSdp, i)
             SDPTools.removeCodecByName(parsedSdp, i, codec)
-            console.warn("sdp:",parsedSdp)
             SDPTools.setXgoogleBitrate(parsedSdp, 10240, i)
-            SDPTools.setMediaBandwidth(parsedSdp, i, 2248)
+            SDPTools.setMediaBandwidth(parsedSdp, i, 2048)
             SDPTools.removeRembAndTransportCC(parsedSdp, i)
 
             // myTrim(media.payloads)
@@ -313,7 +311,13 @@ function dealWithSdp(desc,leveId){
             SDPTools.modifyProfilelevelId(parsedSdp,i,leveId)
 
             /**修改fmtp*/
-            SDPTools.deleteFmtp(parsedSdp, i)
+            SDPTools.modifyFmtp(parsedSdp, i)
+
+            /*修改rtcpFb*/
+            // SDPTools.modifyRtcpFb(parsedSdp, i)
+
+            /*修改ext*/
+            SDPTools.modifyExt(parsedSdp, i)
         }
     }
     desc.sdp = SDPTools.writeSDP(parsedSdp)
