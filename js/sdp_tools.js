@@ -1374,13 +1374,13 @@ let SDPTools = {
         }
     },
     /**
-     * delete fmtp
+     * modify fmtp
      * @param session
      * @param index
      * @param levelIdc: a=fmtp:102 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42001f
      */
 
-    deleteFmtp:function(session,index){
+    modifyFmtp:function(session,index){
         if(!session ){
             console.warn('setFrameRate: Invalid argument!')
             return
@@ -1395,6 +1395,45 @@ let SDPTools = {
         }
 
     },
+    /**
+     * modify rtcpFb
+     * @param session
+     * @param index
+     * @param levelIdc: a=fmtp:102 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42001f
+     */
+    modifyRtcpFb:function(session, index){
+        console.warn("修改RTCPfb")
+        if(!session ){
+            console.warn('setFrameRate: Invalid argument!')
+            return
+        }
+        let media = session.media[index]
+        // for(let rtcpFbItem of media.rtcpFb){
+        for(let i = 0 ; i < media.rtcpFb.length ; i++){
+            let rtcpFb = media.rtcpFb[i]
+            console.warn("rtcpFb:",rtcpFb)
+            delete media.rtcpFb[4]
+            delete media.rtcpFb[5]
+            delete media.rtcpFb[6]
+        }
+    },
+    /**
+     * modify rtcpFb
+     * @param session
+     * @param index
+     * @param levelIdc: a=extmap:14 urn:ietf:params:rtp-hdrext:toffset
+     */
+    modifyExt:function(session, index){
+        console.warn("删除extMap")
+        if(!session ){
+            console.warn('setFrameRate: Invalid argument!')
+            return
+        }
+        let media = session.media[index]
+        delete media.ext
+        console.warn("extMap:",session)
+    },
+
     parseFmtpConfig: function (str) {
         return str.split(/;\s?/).reduce(paramReducer, {})
     },
