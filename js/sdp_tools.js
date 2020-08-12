@@ -846,7 +846,7 @@ let SDPTools = {
 
         /*Process payloads blanks*/
         if (typeof (mediaSession.payloads) === 'string') {
-            mediaSession.payloads = mediaSession.payloads.replace(/[ ]+/g, ' ')
+            mediaSession.payloads = mediaSession.payloads.replace(/[ ]+/g, ' ').trim()
         }
     },
 

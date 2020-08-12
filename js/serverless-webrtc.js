@@ -296,8 +296,6 @@ function dealWithSdp(desc,leveId){
             SDPTools.setMediaBandwidth(parsedSdp, i, 2048)
             SDPTools.removeRembAndTransportCC(parsedSdp, i)
 
-            // myTrim(media.payloads)
-            media.payloads = media.payloads.trim()
             console.warn("media_payloads:",media.payloads)
 
             // SDPTools.modifyPacketizationMode(parsedSdp, i)
