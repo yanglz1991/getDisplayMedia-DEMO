@@ -276,9 +276,9 @@ function showLocalStats(results) {
     console.warn("result:",results)
     results.forEach(function(report) {
         if (report.type === 'outbound-rtp' && report.mediaType === 'video') {
-            console.warn("results come in")
+            console.warn("timestamp:",report.timestamp)
+            console.warn("bysentSent111:",report.bytesSent)
             if(report.bytesSent){
-                console.warn("bysentSent2222:",report.bytesSent)
                 local_bytesSent.innerHTML = '<strong>bytesSent:</strong> ' + report.bytesSent;
             }
         }
@@ -289,8 +289,10 @@ function showRemoteStats(results) {
     // calculate video bitrate
     results.forEach(function(report) {
         if (report.type === 'inbound-rtp' && report.mediaType === 'video') {
+            console.warn("results come in 2")
             console.warn("bytesReceived:",report.bytesReceived)
             if(report.bytesReceived){
+                console.warn("bysentSent2222:",report.bytesReceived)
                 remote_bytesSent.innerHTML = '<strong>bytesReceived:</strong> ' + report.bytesReceived;
             }
         }
@@ -362,7 +364,9 @@ function handleAnswerFromPC2 (answerDesc) {
   answerDesc = dealWithSdp(answerDesc,leveId)
   console.log('remote answer:',answerDesc.sdp.toString())
     //hejuan
+  console.warn("111111")
   setInterval(function() { ReGetStats()},1000)
+  console.warn("10101010101")
   writeToChatLog('Received remote answer', 'text-success')
   pc1.setRemoteDescription(answerDesc)
 }
@@ -483,32 +487,17 @@ function handleOfferFromPC1 (offerDesc) {
     console.log("local answer:",answerDesc.sdp.toString())
     pc2.setLocalDescription(answerDesc)
           //hejuan
-    setInterval(function() { ReGetStats()},1000)
+    console.warn("qqq")
+    setInterval(function() { LoGetStats()},1000)
+    console.warn("9090909090909")
   },
   function () { console.warn("Couldn't create offer") },
   sdpConstraints)
 
     //hejuan
-    setInterval(function() {
-        if(pc1 ||pc2){
-            pc2.getStats(null)
-                .then(showLocalStats, function(err) {
-                    console.log(err);
-                });
-            pc1.getStats(null)
-                .then(showRemoteStats, function(err) {
-                    console.log(err);
-                });
-            if ( localVideo.videoWidth) {
-                presentHtml.innerHTML = '<strong>Video dimensions:</strong> ' +
-                    localVideo.videoWidth + 'x' +  localVideo.videoHeight + 'px';
-            }
-            if (remoteVideo.videoWidth) {
-                presentRemoteHtml.innerHTML = '<strong>Video dimensions:</strong> ' +
-                    remoteVideo.videoWidth + 'x' + remoteVideo.videoHeight + 'px';
-            }
-        }
-    },1000)
+    console.warn("eeeeee")
+    setInterval(function() { ReGetStats()},1000)
+    console.warn("e0e0e00e0e0e0e0e0e0e")
 }
 
 pc2.onicecandidate = function (e) {
