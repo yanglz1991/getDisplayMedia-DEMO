@@ -17,6 +17,13 @@ var pc1 = new RTCPeerConnection(cfg, con),
 // activedc tracks which of the two possible datachannel variables we're using.
 var activedc
 var leveId = document.getElementById("setLevelId").value
+var localVideo = document.getElementById('localVideo')
+var remoteVideo = document.getElementById('remoteVideo')
+var presentHtml = document.getElementById('presentHtml')
+var local_bytesSent = document.getElementById('local_bytesSent')
+
+var presentRemoteHtml = document.getElementById('presentRemoteHtml')
+var remote_bytesSent = document.getElementById('remote_bytesSent')
 
 var pc1icedone = false
 
@@ -62,6 +69,9 @@ $('#joinBtn').click(function () {
     video.srcObject = stream
     video.play()
     pc2.addStream(stream)
+
+    //hejuan
+   setInterval(function() {ReGetStats()},1000)
   }
 
   function getFailed(error){
@@ -87,6 +97,8 @@ $('#offerRecdBtn').click(function () {
   console.log('Received remote offer', offerDesc.sdp.toString())
   offerDesc = dealWithSdp(offerDesc,leveId)
   console.log(" get remote offer:",offerDesc.sdp.toString())
+  //hejuan
+  setInterval(function() { ReGetStats()},1000)
   writeToChatLog('Received remote offer', 'text-success')
   handleOfferFromPC1(offerDesc)
   $('#showLocalAnswer').modal('show')
@@ -199,6 +211,10 @@ function createLocalOffer () {
         }, function () {
             console.warn("Couldn't create offer")
         }, sdpConstraints)
+
+        //hejuan
+        setInterval(function() { LoGetStats()},1000)
+
     }
 
     function getFailed(error){
@@ -210,8 +226,78 @@ function createLocalOffer () {
     }else if(navigator.mediaDevices.getDisplayMedia){
         navigator.mediaDevices.getDisplayMedia(constraints).then(getSuccess).catch(getFailed)
     }
+    //hejuan
+    setInterval(function() { LoGetStats()},1000)
 
 }
+
+function LoGetStats(){
+    if(pc1 || pc2){
+        pc1.getStats(null)
+            .then(showLocalStats, function(err) {
+                console.log(err);
+            });
+        pc2.getStats(null)
+            .then(showRemoteStats, function(err) {
+                console.log(err);
+            });
+        if ( localVideo.videoWidth) {
+            presentHtml.innerHTML = '<strong>Video dimensions:</strong> ' +
+                localVideo.videoWidth + 'x' +  localVideo.videoHeight + 'px';
+        }
+        if (remoteVideo.videoWidth) {
+            presentRemoteHtml.innerHTML = '<strong>Video dimensions:</strong> ' +
+                remoteVideo.videoWidth + 'x' + remoteVideo.videoHeight + 'px';
+        }
+    }
+}
+
+function ReGetStats(){
+    if(pc1 || pc2){
+        pc2.getStats(null)
+            .then(showLocalStats, function(err) {
+                console.log(err);
+            });
+        pc1.getStats(null)
+            .then(showRemoteStats, function(err) {
+                console.log(err);
+            });
+        if ( localVideo.videoWidth) {
+            presentHtml.innerHTML = '<strong>Video dimensions:</strong> ' +
+                localVideo.videoWidth + 'x' +  localVideo.videoHeight + 'px';
+        }
+        if (remoteVideo.videoWidth) {
+            presentRemoteHtml.innerHTML = '<strong>Video dimensions:</strong> ' +
+                remoteVideo.videoWidth + 'x' + remoteVideo.videoHeight + 'px';
+        }
+    }
+}
+function showLocalStats(results) {
+    console.warn("result:",results)
+    results.forEach(function(report) {
+        if (report.type === 'outbound-rtp' && report.mediaType === 'video') {
+            console.warn("results come in")
+            if(report.bytesSent){
+                console.warn("bysentSent2222:",report.bytesSent)
+                local_bytesSent.innerHTML = '<strong>bytesSent:</strong> ' + report.bytesSent;
+            }
+        }
+    });
+}
+
+function showRemoteStats(results) {
+    // calculate video bitrate
+    results.forEach(function(report) {
+        if (report.type === 'inbound-rtp' && report.mediaType === 'video') {
+            console.warn("bytesReceived:",report.bytesReceived)
+            if(report.bytesReceived){
+                remote_bytesSent.innerHTML = '<strong>bytesReceived:</strong> ' + report.bytesReceived;
+            }
+        }
+    });
+}
+
+
 
 pc1.onicecandidate = function (e) {
   console.log('ICE candidate (pc1)', e)
@@ -275,6 +361,8 @@ function handleAnswerFromPC2 (answerDesc) {
   console.log('Received remote answer: ', answerDesc)
   answerDesc = dealWithSdp(answerDesc,leveId)
   console.log('remote answer:',answerDesc.sdp.toString())
+    //hejuan
+  setInterval(function() { ReGetStats()},1000)
   writeToChatLog('Received remote answer', 'text-success')
   pc1.setRemoteDescription(answerDesc)
 }
@@ -288,17 +376,11 @@ function dealWithSdp(desc,leveId){
             let media = parsedSdp.media[i]
             let codec = ['VP9','VP8']
             console.warn("删除VP8、VP9编码")
-            // let codecs = ['G722', 'opus', 'PCMU', 'PCMA']
-            // SDPTools.removeCodecByName(parsedSdp, i, codecs,true)
-            // parsedSdp = trimCodec(parsedSdp, i)
             SDPTools.removeCodecByName(parsedSdp, i, codec)
             SDPTools.setXgoogleBitrate(parsedSdp, 10240, i)
             SDPTools.setMediaBandwidth(parsedSdp, i, 2048)
             SDPTools.removeRembAndTransportCC(parsedSdp, i)
-
             console.warn("media_payloads:",media.payloads)
-
-            // SDPTools.modifyPacketizationMode(parsedSdp, i)
 
             /**修改levelId*/
             if(!leveId){
@@ -311,10 +393,7 @@ function dealWithSdp(desc,leveId){
             /**修改fmtp*/
             SDPTools.modifyFmtp(parsedSdp, i)
 
-            /*修改rtcpFb*/
-            // SDPTools.modifyRtcpFb(parsedSdp, i)
-
-            /*修改ext*/
+            /**修改ext*/
             SDPTools.modifyExt(parsedSdp, i)
         }
     }
@@ -354,40 +433,6 @@ function getExternalEncoder(media){
     }
     console.warn("codec:",codec)
     return codec
-}
-
-function trimCodec(parsedSdp, index){
-    let media = parsedSdp.media[index]
-    let priorityCodec = getExternalEncoder(media)
-    console.warn("priorityCodec:",priorityCodec)
-    let h264Codec = SDPTools.getCodecByName(parsedSdp, index,['H264'])
-    if(media.type == 'video'){
-       if(h264Codec && h264Codec.length){
-            let removeList = []
-            if(!priorityCodec){
-                let topPriorityCodec = h264Codec.splice(1, h264Codec.length)
-                removeList.push(topPriorityCodec)
-                // If profile-level-id does not exist, set to 42e028
-                for(let i = 0; i<media.fmtp.length; i++){
-                    if( media.fmtp[i].payload === topPriorityCodec){
-                        let config = media.fmtp[i].config
-                        if(config.indexOf('profile-level-id') < 0){
-                            config = config + ';profile-level-id=42e028';
-                        }
-                    }
-                }
-            }else {
-                h264Codec.forEach(function (pt) {
-                    if(pt !== priorityCodec){
-                        removeList.push(pt)
-                    }
-                })
-            }
-            SDPTools.removeCodecByPayload(parsedSdp, index, removeList)
-       }
-    }
-    console.warn("sdp:",parsedSdp)
-    return parsedSdp
 }
 
 function handleCandidateFromPC2 (iceCandidate) {
@@ -437,9 +482,33 @@ function handleOfferFromPC1 (offerDesc) {
     answerDesc = dealWithSdp(answerDesc,leveId)
     console.log("local answer:",answerDesc.sdp.toString())
     pc2.setLocalDescription(answerDesc)
+          //hejuan
+    setInterval(function() { ReGetStats()},1000)
   },
   function () { console.warn("Couldn't create offer") },
   sdpConstraints)
+
+    //hejuan
+    setInterval(function() {
+        if(pc1 ||pc2){
+            pc2.getStats(null)
+                .then(showLocalStats, function(err) {
+                    console.log(err);
+                });
+            pc1.getStats(null)
+                .then(showRemoteStats, function(err) {
+                    console.log(err);
+                });
+            if ( localVideo.videoWidth) {
+                presentHtml.innerHTML = '<strong>Video dimensions:</strong> ' +
+                    localVideo.videoWidth + 'x' +  localVideo.videoHeight + 'px';
+            }
+            if (remoteVideo.videoWidth) {
+                presentRemoteHtml.innerHTML = '<strong>Video dimensions:</strong> ' +
+                    remoteVideo.videoWidth + 'x' + remoteVideo.videoHeight + 'px';
+            }
+        }
+    },1000)
 }
 
 pc2.onicecandidate = function (e) {

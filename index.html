@@ -20,26 +20,29 @@
     <input type="text" id="setLevelId" style="width: 200px;height: 30px; margin-top:10px;" value="42e028">
 </div>
 
-<div class="span4" >
-  <Video id="localVideo" style=" width:950px;height:600px; border:1px solid red; "></Video>
-  <span style="text-align: center;">本地屏幕共享</span>
+<div >
+  <div style="margin-left:80px;margin-bottom:30px;" >
+    <Video id="localVideo" style=" width:950px;height:600px; border:1px solid red; "></Video>
+    <span style="margin-left:10px;display:block;">本地屏幕共享</span>
+    <div id="presentHtml" ></div>
+    <div id="local_bytesSent"></div>
+  </div>
+
+  </hr>
+  <div style="margin-left:80px;">
+    <Video id="remoteVideo" style="width:950px;height:600px;border:1px solid red;"></Video>
+    <span style="margin-left:10px;display:block;">远端的屏幕共享</span>
+    <div id="presentRemoteHtml" ></div>
+    <div id="remote_bytesSent"></div>
+  </div>
 </div>
 
-<!--<div  class="span4" style="margin-left:700px;margin-right:10px; border:1px solid red;"></div>-->
-<!--</br>-->
-
-<div class="span4" style="margin-left:500px;margin-right:10px;display:inline-block;">
-  <Video id="remoteVideo" style="width:950px;height:600px;border:1px solid red;"></Video>
-  <span style="text-align: center;">远端的屏幕共享</span>
-</div>
-
-</br>
-<div class="span4 " style="display:none;">
+<div  style="float:right; margin-top:-1280px;margin-right:60px;">
   <fieldset class="well">
     <p class="head muted">
       Serverless WebRTC chat demonstration.
     </p>
-    <div class="text-info" id="chatlog" style="height:350px; overflow:auto;">
+    <div class="text-info" id="chatlog" style="height:850px; overflow:auto;">
     </div>
   </fieldset>
   <form class="form-inline" onSubmit="return sendMessage()" action="">
