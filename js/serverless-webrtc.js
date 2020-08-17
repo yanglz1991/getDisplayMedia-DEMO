@@ -69,8 +69,6 @@ $('#joinBtn').click(function () {
     video.srcObject = stream
     video.play()
     pc2.addStream(stream)
-
-    //hejuan
    setInterval(function() {ReGetStats()},1000)
   }
 
@@ -97,7 +95,6 @@ $('#offerRecdBtn').click(function () {
   console.log('Received remote offer', offerDesc.sdp.toString())
   offerDesc = dealWithSdp(offerDesc,leveId)
   console.log(" get remote offer:",offerDesc.sdp.toString())
-  //hejuan
   setInterval(function() { ReGetStats()},1000)
   writeToChatLog('Received remote offer', 'text-success')
   handleOfferFromPC1(offerDesc)
@@ -212,9 +209,7 @@ function createLocalOffer () {
             console.warn("Couldn't create offer")
         }, sdpConstraints)
 
-        //hejuan
         setInterval(function() { LoGetStats()},1000)
-
     }
 
     function getFailed(error){
@@ -226,7 +221,6 @@ function createLocalOffer () {
     }else if(navigator.mediaDevices.getDisplayMedia){
         navigator.mediaDevices.getDisplayMedia(constraints).then(getSuccess).catch(getFailed)
     }
-    //hejuan
     setInterval(function() { LoGetStats()},1000)
 
 }
@@ -363,10 +357,7 @@ function handleAnswerFromPC2 (answerDesc) {
   console.log('Received remote answer: ', answerDesc)
   answerDesc = dealWithSdp(answerDesc,leveId)
   console.log('remote answer:',answerDesc.sdp.toString())
-    //hejuan
-  console.warn("111111")
   setInterval(function() { ReGetStats()},1000)
-  console.warn("10101010101")
   writeToChatLog('Received remote answer', 'text-success')
   pc1.setRemoteDescription(answerDesc)
 }
@@ -405,9 +396,6 @@ function dealWithSdp(desc,leveId){
     return  desc
 }
 
-function myTrim(x) {
-    return x.replace(/^\s+|\s+$/gm,'');
-}
 
 function getExternalEncoder(media){
     console.warn("come in getExternalEncoder:",media)
@@ -435,7 +423,6 @@ function getExternalEncoder(media){
             console.warn('get priority H264 PT ' + codec)
         }
     }
-    console.warn("codec:",codec)
     return codec
 }
 
@@ -486,18 +473,13 @@ function handleOfferFromPC1 (offerDesc) {
     answerDesc = dealWithSdp(answerDesc,leveId)
     console.log("local answer:",answerDesc.sdp.toString())
     pc2.setLocalDescription(answerDesc)
-          //hejuan
-    console.warn("qqq")
     setInterval(function() { LoGetStats()},1000)
-    console.warn("9090909090909")
   },
   function () { console.warn("Couldn't create offer") },
   sdpConstraints)
 
-    //hejuan
-    console.warn("eeeeee")
-    setInterval(function() { ReGetStats()},1000)
-    console.warn("e0e0e00e0e0e0e0e0e0e")
+  setInterval(function() { ReGetStats()},1000)
+
 }
 
 pc2.onicecandidate = function (e) {
