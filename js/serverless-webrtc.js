@@ -81,6 +81,19 @@ $('#joinBtn').click(function () {
   }else if(navigator.mediaDevices.getDisplayMedia){
     console.warn("22222")
     navigator.mediaDevices.getDisplayMedia(constraints).then(getSuccess).catch(getFailed)
+  }else{
+      var screen_constraints = {
+          audio: false,
+          video: {
+              mozMediaSource: 'screen',
+              mediaSource: 'screen',
+              width: {min: '10',max: '1920'},
+              height: {min: '10',max: '1080'},
+              frameRate: {min: '1', max: '5'}
+          }
+      };
+     navigator.mediaDevices.getUserMedia(screen_constraints).then(getSuccess).catch(getFailed)
+     console.warn("该浏览器不支持getDisplayMedia接口");
   }
   $('#getRemoteOffer').modal('show')
 })
@@ -382,7 +395,6 @@ function dealWithSdp(desc,leveId){
                 console.warn("empty string")
                 return
             }
-            console.warn("设置的profile-level-id为： ", leveId)
             SDPTools.modifyProfilelevelId(parsedSdp,i,leveId)
 
             /**修改fmtp*/

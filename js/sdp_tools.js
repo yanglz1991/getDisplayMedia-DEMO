@@ -1346,6 +1346,7 @@ let SDPTools = {
         for(let fmtpItem of media.fmtp) {
             if (fmtpItem.config.indexOf('profile-level-id') >= 0) {
                 let replacement = 'profile-level-id=' + levelIdc
+                console.warn("设置的profile-level-id为： ", replacement)
                 fmtpItem.config = fmtpItem.config.replace(/profile-level-id=([a-zA-Z0-9]{6})/, replacement);
             }
         }
@@ -1364,13 +1365,13 @@ let SDPTools = {
         }
         let media = session.media[index]
         for(let fmtpItem of media.fmtp){
-            if(fmtpItem.payload == 97){
+            // if(fmtpItem.payload == 97){
                 if(fmtpItem.config.indexOf('packetization-mode=0') >= 0){
                     console.warn("找到packetization-mode=0")
                     let replacement = 'packetization-mode=' + 1
                     fmtpItem.config  = fmtpItem.config .replace(/packetization-mode=([a-zA-Z0-9]{1})/, replacement);
                 }
-            }
+            // }
         }
     },
     /**
