@@ -386,7 +386,7 @@ function dealWithSdp(desc,leveId){
             console.warn("删除VP8、VP9编码")
             SDPTools.removeCodecByName(parsedSdp, i, codec)
             SDPTools.setXgoogleBitrate(parsedSdp, 204800, i)
-            SDPTools.setMediaBandwidth(parsedSdp, i, 2048)
+            SDPTools.setMediaBandwidth(parsedSdp, i, 20480)
             SDPTools.removeRembAndTransportCC(parsedSdp, i)
             console.warn("media_payloads:",media.payloads)
 
